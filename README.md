@@ -329,7 +329,7 @@ npm start
 
 In the terminal, you see the "Listening on port 7000" message, indicating that you've set up the server correctly to listen for requests on port 7000. You are ready to develop this application further using TypeScript interfaces to define data models, services to manipulate the API resources, and much more.
 
-
+Source: https://auth0.com/blog/use-typescript-to-create-a-secure-api-with-nodejs-and-express-getting-started/
 
 # HTTPs with SSL
 
