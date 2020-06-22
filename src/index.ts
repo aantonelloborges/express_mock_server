@@ -7,18 +7,28 @@ import cors from "cors";
 import helmet from "helmet";
 import { itemsRouter } from "./items/items.router";
 import { errorHandler } from "./middleware/error.middleware";
-import {notFoundHandler} from "./middleware/notFound.middleware";
+import { notFoundHandler } from "./middleware/notFound.middleware";
 
 dotenv.config();
 
 /**
  * App Variables
  */
-if (!process.env.PORT) {
+var fs = require('fs');
+var http = require('http');
+var https = require('https');
+var privateKey  = fs.readFileSync('sslcert/server.key', 'utf8');
+var certificate = fs.readFileSync('sslcert/server.crt', 'utf8');
+var credentials = {key: privateKey, cert: certificate};
+
+if (!process.env.DEFAULT_PORT || !process.env.HTTPS_PORT || !process.env.HTTP_PORT) {
    process.exit(1);
 }
 
-const PORT: number = parseInt(process.env.PORT as string, 10);
+var PORT = parseInt(process.env.HTTP_PORT as string, 10);
+if (process.env.DEFAULT_PORT == "https"){
+  PORT = parseInt(process.env.HTTPS_PORT as string, 10);
+} 
 
 const app = express();
 
@@ -50,9 +60,16 @@ app.use(notFoundHandler);
 /**
  * Server Activation
  */
-const server = app.listen(PORT, () => {
+// your express configuration here
+var httpServer = http.createServer(app);
+if (process.env.DEFAULT_PORT = "https"){
+  var httpServer = https.createServer(credentials, app);
+}
+
+const server = httpServer.listen(PORT, () => {
   console.log(`Listening on port ${PORT}`);
 });
+
 
 /**
  * Webpack HMR Activation

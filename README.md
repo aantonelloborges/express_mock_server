@@ -328,3 +328,84 @@ npm start
 ```
 
 In the terminal, you see the "Listening on port 7000" message, indicating that you've set up the server correctly to listen for requests on port 7000. You are ready to develop this application further using TypeScript interfaces to define data models, services to manipulate the API resources, and much more.
+
+
+
+# HTTPs with SSL
+
+## Create a openssl-custom.cnf
+
+```bash
+touch openssl-custom.cnf
+```
+
+Add the following lines to openssl-custom.cnf file.
+
+```bash
+[req]
+default_bits = 2048
+prompt = no
+default_md = sha256
+x509_extensions = v3_req
+distinguished_name = dn
+
+[dn]
+C = <COUNTRY>
+ST = <STATE>
+L = <LOCALITY / CITY>
+O = <ORGANIZATION>
+OU = <ORGANIZATION_UNIT>
+emailAddress = <EMAIL_ADDRESS>
+CN = <HOSTNAME / IP_ADDRESS>
+
+[v3_req]
+subjectAltName = @alt_names
+
+[alt_names]
+DNS.1 = *.localhost
+DNS.2 = localhost
+```
+
+⚠️ Caution: Remember to change the field options like this:
+
+```bahs
+[req]
+default_bits = 2048
+prompt = no
+default_md = sha256
+x509_extensions = v3_req
+distinguished_name = dn
+
+[dn]
+C = BR	
+ST = SP
+L = São Paulo
+O = IT
+OU = IT Department
+emailAddress = aantonelloborges@gmail.com
+CN = localhost
+
+[v3_req]
+subjectAltName = @alt_names
+
+[alt_names]
+DNS.1 = *.localhost
+DNS.2 = localhost
+```
+
+## Generate de SSL certification and key
+
+Run the below command line:
+
+```bash
+openssl req \
+    -newkey rsa:2048 \
+    -x509 \
+    -nodes \
+    -keyout server.key \
+    -new \
+    -out server.crt \
+    -config ./openssl-custom.cnf \
+    -sha256 \
+    -days 365
+```
